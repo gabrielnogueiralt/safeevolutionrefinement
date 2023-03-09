@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >= 0.5.0;
+pragma solidity >=0.5.0;
 // pragma solidity ^0.8.0;
 
 import "./Context.sol";
@@ -31,9 +31,9 @@ import "./IERC20.sol";
  */
 /// @notice  invariant  _totalSupply  ==  __verifier_sum_uint(_balances)
 contract ERC20 is Context, IERC20 {
-    mapping (address => uint256) private _balances;
+    mapping(address => uint256) private _balances;
 
-    mapping (address => mapping (address => uint256)) private _allowances;
+    mapping(address => mapping(address => uint256)) private _allowances;
 
     uint256 private _totalSupply;
 
@@ -41,7 +41,7 @@ contract ERC20 is Context, IERC20 {
     string private _symbol;
     uint8 private _decimals;
 
-     /**
+    /**
      * @dev Emitted when `value` tokens are moved from one account (`from`) to
      * another (`to`).
      *
@@ -53,7 +53,11 @@ contract ERC20 is Context, IERC20 {
      * @dev Emitted when the allowance of a `spender` for an `owner` is set by
      * a call to {approve}. `value` is the new allowance.
      */
-    event Approval(address indexed owner, address indexed spender, uint256 value);
+    event Approval(
+        address indexed owner,
+        address indexed spender,
+        uint256 value
+    );
 
     /**
      * @dev Sets the values for {name} and {symbol}, initializes {decimals} with
@@ -64,7 +68,7 @@ contract ERC20 is Context, IERC20 {
      * All three of these values are immutable: they can only be set once during
      * construction.
      */
-    constructor (string memory name_, string memory symbol_) public {
+    constructor(string memory name_, string memory symbol_) public {
         _name = name_;
         _symbol = symbol_;
         _decimals = 18;
@@ -73,7 +77,7 @@ contract ERC20 is Context, IERC20 {
     /**
      * @dev Returns the name of the token.
      */
-    function name() public view  returns (string memory) {
+    function name() public view returns (string memory) {
         return _name;
     }
 
@@ -81,7 +85,7 @@ contract ERC20 is Context, IERC20 {
      * @dev Returns the symbol of the token, usually a shorter version of the
      * name.
      */
-    function symbol() public view  returns (string memory) {
+    function symbol() public view returns (string memory) {
         return _symbol;
     }
 
@@ -98,21 +102,28 @@ contract ERC20 is Context, IERC20 {
      * no way affects any of the arithmetic of the contract, including
      * {IERC20-balanceOf} and {IERC20-transfer}.
      */
-    function decimals() public view  returns (uint8) {
+    function decimals() public view returns (uint8) {
         return _decimals;
     }
 
     /**
      * @dev See {IERC20-totalSupply}.
      */
+    /**
+     * @natural_language The totalSupply() function should return the same value
+     * as the _totalSupply state variable, ensuring that the function does not modify
+     * the state of the contract. The postcondition is that the returned value (supply)
+     * must be equal to _totalSupply.
+     */
     /// @notice postcondition supply == _totalSupply
-    function totalSupply() public view   returns (uint256 supply) {
+    function totalSupply() public view returns (uint256 supply) {
         return _totalSupply;
     }
 
     /**
      * @dev See {IERC20-balanceOf}.
      */
+    // @natural_language The balanceOf() function should return the same value as the _balances state variable, ensuring that the function does not modify the state of the contract. The postcondition is that the returned value (balance) must be equal to _balances[account].
     /// @notice postcondition _balances[account] == balance
     function balanceOf(address account) public view returns (uint256 balance) {
         return _balances[account];
@@ -126,10 +137,22 @@ contract ERC20 is Context, IERC20 {
      * - `recipient` cannot be the zero address.
      * - the caller must have a balance of at least `amount`.
      */
+    /**
+     * @natural_language
+     * Postconditions:
+     * - If the transfer is successful, the balances of the sender and recipient will be updated as follows:
+     * - If the sender is not the recipient, the sender's balance will be decreased by the amount transferred and the recipient's balance will be increased by the same amount.
+     * - If the sender is also the recipient, neither balance will change.
+     * - If the transfer is unsuccessful, the balances will not change.
+     * - The function emits a Transfer event.
+     */
     /// @notice  postcondition ( ( _balances[msg.sender] ==  __verifier_old_uint (_balances[msg.sender] ) - amount  && msg.sender  != recipient ) ||   ( _balances[msg.sender] ==  __verifier_old_uint ( _balances[msg.sender]) && msg.sender  == recipient ) &&  success )   || !success
     /// @notice  postcondition ( ( _balances[recipient] ==  __verifier_old_uint ( _balances[recipient] ) + amount  && msg.sender  != recipient ) ||   ( _balances[recipient] ==  __verifier_old_uint ( _balances[recipient] ) && msg.sender  == recipient ) &&  success )   || !success
-    /// @notice  emits  Transfer 
-    function transfer(address recipient, uint256 amount) public  returns (bool success) {
+    /// @notice  emits  Transfer
+    function transfer(
+        address recipient,
+        uint256 amount
+    ) public returns (bool success) {
         _transfer(_msgSender(), recipient, amount);
         return true;
     }
@@ -138,7 +161,10 @@ contract ERC20 is Context, IERC20 {
      * @dev See {IERC20-allowance}.
      */
     /// @notice postcondition _allowances[owner][spender] == remaining
-    function allowance(address owner, address spender) public view   returns (uint256 remaining) {
+    function allowance(
+        address owner,
+        address spender
+    ) public view returns (uint256 remaining) {
         return _allowances[owner][spender];
     }
 
@@ -149,9 +175,19 @@ contract ERC20 is Context, IERC20 {
      *
      * - `spender` cannot be the zero address.
      */
-    /// @notice postcondition (_allowances[msg.sender ][ spender] ==  amount  &&  success) || ( _allowances[msg.sender ][ spender] ==  __verifier_old_uint ( _allowances[msg.sender ][ spender] ) && !success )    
+    /**
+     * @natural_language
+     * Postconditions:
+     * - If the approval is successful, the allowance granted by the sender to the spender will be updated to the amount specified.
+     * - If the approval is unsuccessful, the allowance will not change.
+     * - The function emits an Approval event.
+     */
+    /// @notice postcondition (_allowances[msg.sender ][ spender] ==  amount  &&  success) || ( _allowances[msg.sender ][ spender] ==  __verifier_old_uint ( _allowances[msg.sender ][ spender] ) && !success )
     /// @notice emits Approval
-    function approve(address spender, uint256 amount) public   returns (bool success) {
+    function approve(
+        address spender,
+        uint256 amount
+    ) public returns (bool success) {
         _approve(_msgSender(), spender, amount);
         return true;
     }
@@ -169,17 +205,49 @@ contract ERC20 is Context, IERC20 {
      * - the caller must have allowance for ``sender``'s tokens of at least
      * `amount`.
      */
+    /**
+     * @natural_language
+     * Postconditions:
+     * -The balance of the sender address is either reduced by amount if sender
+     * is not equal to recipient, or remains the same if sender is equal to
+     * recipient, and success is true. Otherwise, success is false.
+     * -The balance of the recipient address is either increased by amount if
+     * sender is not equal to recipient, or remains the same if sender is equal
+     * to recipient, and success is true. Otherwise, success is false.
+     * -The allowance of sender for the msg.sender is reduced by amount and success
+     * is true. If success is false, the allowance remains the same. If sender is
+     * equal to msg.sender, the allowance may remain the same or be reduced by amount.
+     * -The allowance of sender for msg.sender is less than or equal to its previous
+     * value before the function call, or remains the same if sender is equal to
+     * msg.sender.
+     * -The function emits a Transfer event indicating the transfer of amount
+     * from sender to recipient.
+     * -The function emits an Approval event indicating the updated allowance
+     * of sender for msg.sender.
+     */
+
     /// @notice  postcondition ( ( _balances[sender] ==  __verifier_old_uint (_balances[sender] ) - amount  &&  sender  != recipient ) ||   ( _balances[sender] ==  __verifier_old_uint ( _balances[sender] ) &&  sender== recipient ) &&  success )   || !success
     /// @notice  postcondition ( ( _balances[recipient] ==  __verifier_old_uint ( _balances[recipient] ) + amount  &&  sender  != recipient ) ||   ( _balances[recipient] ==  __verifier_old_uint ( _balances[recipient] ) &&  sender  ==recipient ) &&  success )   || !success
     /// @notice  postcondition  (_allowances[sender ][msg.sender] ==  __verifier_old_uint (_allowances[sender ][msg.sender] ) - amount && success) || (_allowances[sender ][msg.sender] ==  __verifier_old_uint (_allowances[sender ][msg.sender] ) && !success) ||  sender  == msg.sender
-    /// @notice  postcondition  _allowances[sender ][msg.sender]  <= __verifier_old_uint (_allowances[sender ][msg.sender] ) ||  sender  == msg.sender 
-    /// @notice  emits  Transfer 
+    /// @notice  postcondition  _allowances[sender ][msg.sender]  <= __verifier_old_uint (_allowances[sender ][msg.sender] ) ||  sender  == msg.sender
+    /// @notice  emits  Transfer
     /// @notice emits Approval
-    function transferFrom(address sender, address recipient, uint256 amount) public returns (bool success) {
+    function transferFrom(
+        address sender,
+        address recipient,
+        uint256 amount
+    ) public returns (bool success) {
         _transfer(sender, recipient, amount);
 
-        require(_allowances[sender][_msgSender()] >= amount, "ERC20: transfer amount exceeds allowance");
-        _approve(sender, _msgSender(), _allowances[sender][_msgSender()] - amount);
+        require(
+            _allowances[sender][_msgSender()] >= amount,
+            "ERC20: transfer amount exceeds allowance"
+        );
+        _approve(
+            sender,
+            _msgSender(),
+            _allowances[sender][_msgSender()] - amount
+        );
 
         return true;
     }
@@ -196,9 +264,16 @@ contract ERC20 is Context, IERC20 {
      *
      * - `spender` cannot be the zero address.
      */
-    ///@notice emits Approval 
-    function increaseAllowance(address spender, uint256 addedValue) public  returns (bool) {
-        _approve(_msgSender(), spender, _allowances[_msgSender()][spender] + addedValue);
+    ///@notice emits Approval
+    function increaseAllowance(
+        address spender,
+        uint256 addedValue
+    ) public returns (bool) {
+        _approve(
+            _msgSender(),
+            spender,
+            _allowances[_msgSender()][spender] + addedValue
+        );
         return true;
     }
 
@@ -216,10 +291,20 @@ contract ERC20 is Context, IERC20 {
      * - `spender` must have allowance for the caller of at least
      * `subtractedValue`.
      */
-     ///@notice emits Approval
-    function decreaseAllowance(address spender, uint256 subtractedValue) public  returns (bool) {
-        require(_allowances[_msgSender()][spender] >= subtractedValue, "ERC20: decreased allowance below zero");
-        _approve(_msgSender(), spender, _allowances[_msgSender()][spender] - subtractedValue);
+    ///@notice emits Approval
+    function decreaseAllowance(
+        address spender,
+        uint256 subtractedValue
+    ) public returns (bool) {
+        require(
+            _allowances[_msgSender()][spender] >= subtractedValue,
+            "ERC20: decreased allowance below zero"
+        );
+        _approve(
+            _msgSender(),
+            spender,
+            _allowances[_msgSender()][spender] - subtractedValue
+        );
 
         return true;
     }
@@ -239,13 +324,20 @@ contract ERC20 is Context, IERC20 {
      * - `sender` must have a balance of at least `amount`.
      */
     /// @notice  emits  Transfer
-    function _transfer(address sender, address recipient, uint256 amount) internal  {
+    function _transfer(
+        address sender,
+        address recipient,
+        uint256 amount
+    ) internal {
         require(sender != address(0), "ERC20: transfer from the zero address");
         require(recipient != address(0), "ERC20: transfer to the zero address");
 
         _beforeTokenTransfer(sender, recipient, amount);
 
-        require(_balances[sender] >= amount, "ERC20: transfer amount exceeds balance");
+        require(
+            _balances[sender] >= amount,
+            "ERC20: transfer amount exceeds balance"
+        );
         _balances[sender] -= amount;
         _balances[recipient] += amount;
 
@@ -262,7 +354,7 @@ contract ERC20 is Context, IERC20 {
      * - `to` cannot be the zero address.
      */
     /// @notice  emits  Transfer
-    function _mint(address account, uint256 amount) internal  {
+    function _mint(address account, uint256 amount) internal {
         require(account != address(0), "ERC20: mint to the zero address");
 
         _beforeTokenTransfer(address(0), account, amount);
@@ -284,12 +376,15 @@ contract ERC20 is Context, IERC20 {
      * - `account` must have at least `amount` tokens.
      */
     /// @notice  emits  Transfer
-    function _burn(address account, uint256 amount) internal  {
+    function _burn(address account, uint256 amount) internal {
         require(account != address(0), "ERC20: burn from the zero address");
 
         _beforeTokenTransfer(account, address(0), amount);
 
-        require(_balances[account] >= amount, "ERC20: burn amount exceeds balance");
+        require(
+            _balances[account] >= amount,
+            "ERC20: burn amount exceeds balance"
+        );
         _balances[account] -= amount;
         _totalSupply -= amount;
 
@@ -310,7 +405,7 @@ contract ERC20 is Context, IERC20 {
      * - `spender` cannot be the zero address.
      */
     /// @notice  emits  Approval
-    function _approve(address owner, address spender, uint256 amount) internal  {
+    function _approve(address owner, address spender, uint256 amount) internal {
         require(owner != address(0), "ERC20: approve from the zero address");
         require(spender != address(0), "ERC20: approve to the zero address");
 
@@ -325,7 +420,7 @@ contract ERC20 is Context, IERC20 {
      * applications that interact with token contracts will not expect
      * {decimals} to ever change, and may work incorrectly if it does.
      */
-    function _setupDecimals(uint8 decimals_) internal  {
+    function _setupDecimals(uint8 decimals_) internal {
         _decimals = decimals_;
     }
 
@@ -343,5 +438,9 @@ contract ERC20 is Context, IERC20 {
      *
      * To learn more about hooks, head to xref:ROOT:extending-contracts.adoc#using-hooks[Using Hooks].
      */
-    function _beforeTokenTransfer(address from, address to, uint256 amount) internal  { }
+    function _beforeTokenTransfer(
+        address from,
+        address to,
+        uint256 amount
+    ) internal {}
 }
