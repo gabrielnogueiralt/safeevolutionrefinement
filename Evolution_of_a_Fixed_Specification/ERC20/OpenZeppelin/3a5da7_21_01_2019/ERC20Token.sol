@@ -24,10 +24,9 @@ contract ERC20 is IERC20 {
     );
 
     /**
-     * @natural_language The totalSupply() function should return the same value as
-     * the _totalSupply state variable, ensuring that the function does not modify
-     * the state of the contract. The postcondition is that the returned value (supply)
-     * must be equal to _totalSupply.
+     * @natural_language
+     * @description Get the total supply of tokens.
+     * @return supply The total supply of tokens
      */
     //
     /// @notice postcondition supply == _totalSupply
@@ -36,11 +35,10 @@ contract ERC20 is IERC20 {
     }
 
     /**
-     * @natural_language The balanceOf() function should return the same value as the
-     * balance of the specified owner account held in the internal _balances mapping,
-     * ensuring that the function does not modify the state of the contract.
-     * The postcondition isthat the returned value (balance) must be equal to the
-     * balance of the specified account.
+     * @natural_language
+     * @description Get the token balance of the specified `owner` address.
+     * @param owner The address whose balance is to be checked
+     * @return balance The balance of the specified address
      */
     /// @notice postcondition _balances[owner] == balance
     function balanceOf(address owner) public view returns (uint256 balance) {
@@ -48,12 +46,11 @@ contract ERC20 is IERC20 {
     }
 
     /**
-     * @natural_language The allowance() function should return the same value as the
-     * amount of tokens that spender is allowed to spend from the owner account held
-     * in the internal _allowed mapping. The postcondition is that the returned value
-     * (remaining) must be equal to the allowance stored in _allowed[owner][spender].
-     * The function should not modify the state of the contract and should only
-     * retrieve the allowance and return it as the output of the function.
+     * @natural_language
+     * @description Transfer tokens from the caller's account to the specified `to` address.
+     * @param to The address to receive the transferred tokens
+     * @param value The amount of tokens to transfer
+     * @return success A boolean value indicating whether the transfer was successful
      */
     /// @notice postcondition _allowed[owner][spender] == remaining
     function allowance(
@@ -64,14 +61,11 @@ contract ERC20 is IERC20 {
     }
 
     /**
-     * @natural_language The transfer() function should transfer the specified amount
-     * of tokens from the sender's account to the specified recipient account. The
-     * function should not modify the state of the contract and should only transfer
-     * the specified amount of tokens from the sender's account to the recipient's
-     * account. The postcondition is that the sender's balance must be reduced by
-     * the specified amount of tokens and the recipient's balance must be increased
-     * by the specified amount of tokens. The function should revert if the sender's
-     * account does not have enough tokens to transfer.
+     * @natural_language
+     * @description Approve the specified `spender` to spend tokens on behalf of the caller's account.
+     * @param spender The address that will be granted the allowance to spend tokens
+     * @param value The amount of tokens allowed to be spent
+     * @return success A boolean value indicating whether the approval was successful
      */
     /// @notice postcondition ( ( _balances[msg.sender] ==  __verifier_old_uint (_balances[msg.sender] ) - value  && msg.sender  != to ) ||   ( _balances[msg.sender] ==  __verifier_old_uint ( _balances[msg.sender]) && msg.sender  == to ) &&  success )   || !success
     /// @notice postcondition ( ( _balances[to] ==  __verifier_old_uint ( _balances[to] ) + value  && msg.sender  != to ) ||   ( _balances[to] ==  __verifier_old_uint ( _balances[to] ) && msg.sender  == to ) &&  success )   || !success
@@ -82,12 +76,11 @@ contract ERC20 is IERC20 {
     }
 
     /**
-     * @natural_language The approve() function should set the allowance for spender
-     * to value for the msg.sender account, emit an Approval event, and return true.
-     * The postcondition is that either the allowance of spender for msg.sender is
-     * set to value and the function returns true, or the allowance is not modified
-     * and the function returns false. The function should not modify any other
-     * state variables except for the allowance of spender for msg.sender.
+     * @natural_language
+     * @description Approve the specified `spender` to spend tokens on behalf of the caller's account.
+     * @param spender The address that will be granted the allowance to spend tokens
+     * @param value The amount of tokens allowed to be spent
+     * @return success A boolean value indicating whether the approval was successful
      */
     /// @notice postcondition (_allowed[msg.sender ][ spender] ==  value  &&  success) || ( _allowed[msg.sender ][ spender] ==  __verifier_old_uint ( _allowed[msg.sender ][ spender] ) && !success )
     /// @notice  emits  Approval
@@ -100,20 +93,12 @@ contract ERC20 is IERC20 {
     }
 
     /**
-     * @natural_language The transferFrom() function should transfer value amount
-     * of tokens from from to to using the allowance of msg.sender. The
-     * postconditions are:
-     * The balance of from should be decreased by value if from and to are different
-     * accounts, or should remain the same if from and to are the same account.
-     * The balance of to should be increased by value if from and to are different
-     * accounts, or should remain the same if from and to are the same account.
-     * The allowance of msg.sender for from should be decreased by value.
-     * The allowance of msg.sender for from should be less than or equal to the original
-     * allowance or should be equal to the original allowance if the transfer fails.
-     * The function should emit a Transfer event and an Approval event.
-     * The function should return true if the transfer succeeds or false if it fails.
-     * The function should not modify any other state variables except for the balances
-     * and allowances of the specified accounts.
+     * @natural_language
+     * @description Transfer tokens from the specified `from` address to the specified `to` address, using the allowance mechanism.
+     * @param from The address from which tokens will be transferred
+     * @param to The address to which tokens will be transferred
+     * @param value The amount of tokens to transfer
+     * @return success A boolean value indicating whether the transfer was successful
      */
     /// @notice postcondition ( ( _balances[from] ==  __verifier_old_uint (_balances[from] ) - value  &&  from  != to ) ||   ( _balances[from] ==  __verifier_old_uint ( _balances[from] ) &&  from== to ) &&  success )   || !success
     /// @notice postcondition ( ( _balances[to] ==  __verifier_old_uint ( _balances[to] ) + value  &&  from  != to ) ||   ( _balances[to] ==  __verifier_old_uint ( _balances[to] ) &&  from  ==to ) &&  success )   || !success
@@ -132,10 +117,10 @@ contract ERC20 is IERC20 {
     }
 
     /**
-     * @natural_language The increaseAllowance() function should increase the allowance
-     * of spender for the msg.sender account by addedValue and emit an Approval event.
-     * The function should return true. The function should not modify any other state
-     * variables except for the allowance of spender for msg.sender.
+     * @natural_language
+     * Postconditions:
+     * - If the allowance increase is successful, the allowance granted by the msg.sender to the spender will be updated by adding the addedValue specified.
+     * - The function emits an Approval event.
      */
     /// @notice  emits  Approval
     function increaseAllowance(
