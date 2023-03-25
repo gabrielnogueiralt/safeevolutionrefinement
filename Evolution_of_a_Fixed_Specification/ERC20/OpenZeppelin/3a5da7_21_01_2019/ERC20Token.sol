@@ -25,10 +25,9 @@ contract ERC20 is IERC20 {
 
     /**
      * @natural_language
-     * @description Get the total supply of tokens.
-     * @return supply The total supply of tokens
+     * @description The total supply of tokens (supply) is set to be equal to the specified total supply value (_totalSupply).
+     * @param _totalSupply The total number of tokens (supply) in circulation
      */
-    //
     /// @notice postcondition supply == _totalSupply
     function totalSupply() public view returns (uint256 supply) {
         return _totalSupply;
@@ -36,9 +35,9 @@ contract ERC20 is IERC20 {
 
     /**
      * @natural_language
-     * @description Get the token balance of the specified `owner` address.
-     * @param owner The address whose balance is to be checked
-     * @return balance The balance of the specified address
+     * @description The balance of the specified owner (owner) is equal to the returned balance value (balance).
+     * @param owner The address of the token holder whose balance is being checked
+     * @return balance The token balance of the specified owner
      */
     /// @notice postcondition _balances[owner] == balance
     function balanceOf(address owner) public view returns (uint256 balance) {
@@ -47,10 +46,10 @@ contract ERC20 is IERC20 {
 
     /**
      * @natural_language
-     * @description Transfer tokens from the caller's account to the specified `to` address.
-     * @param to The address to receive the transferred tokens
-     * @param value The amount of tokens to transfer
-     * @return success A boolean value indicating whether the transfer was successful
+     * @description The remaining allowance for the specified spender (spender) from the owner's (owner) balance is equal to the returned remaining value (remaining).
+     * @param owner The address of the token holder who granted the allowance
+     * @param spender The address of the spender whose remaining allowance is being checked
+     * @return remaining The remaining token allowance of the spender from the owner's balance
      */
     /// @notice postcondition _allowed[owner][spender] == remaining
     function allowance(
@@ -62,10 +61,10 @@ contract ERC20 is IERC20 {
 
     /**
      * @natural_language
-     * @description Approve the specified `spender` to spend tokens on behalf of the caller's account.
-     * @param spender The address that will be granted the allowance to spend tokens
-     * @param value The amount of tokens allowed to be spent
-     * @return success A boolean value indicating whether the approval was successful
+     * @description When the transfer is successful, the balance of the sender (msg.sender) in _balances decreases by the transferred value (value) if the sender and receiver (to) are different, or remains the same if the sender and receiver are the same. If the transfer is not successful, there is no change in the balances. In addition, the balance of the specified receiver (to) in _balances increases by the transferred value if the sender and receiver are different, or remains the same if the sender and receiver are the same.
+     * @param to The address of the recipient
+     * @param value The number of tokens to transfer
+     * @return success A boolean indicating if the operation was successful
      */
     /// @notice postcondition ( ( _balances[msg.sender] ==  __verifier_old_uint (_balances[msg.sender] ) - value  && msg.sender  != to ) ||   ( _balances[msg.sender] ==  __verifier_old_uint ( _balances[msg.sender]) && msg.sender  == to ) &&  success )   || !success
     /// @notice postcondition ( ( _balances[to] ==  __verifier_old_uint ( _balances[to] ) + value  && msg.sender  != to ) ||   ( _balances[to] ==  __verifier_old_uint ( _balances[to] ) && msg.sender  == to ) &&  success )   || !success
@@ -77,10 +76,10 @@ contract ERC20 is IERC20 {
 
     /**
      * @natural_language
-     * @description Approve the specified `spender` to spend tokens on behalf of the caller's account.
-     * @param spender The address that will be granted the allowance to spend tokens
-     * @param value The amount of tokens allowed to be spent
-     * @return success A boolean value indicating whether the approval was successful
+     * @description When the approval is successful, the allowance of the specified spender (spender) for the sender (msg.sender) in _allowed is set to the specified value (value). If the approval is not successful, the allowance remains unchanged. An Approval event is emitted in both cases.
+     * @param spender The address of the spender
+     * @param value The number of tokens to be allowed
+     * @return success A boolean indicating if the operation was successful
      */
     /// @notice postcondition (_allowed[msg.sender ][ spender] ==  value  &&  success) || ( _allowed[msg.sender ][ spender] ==  __verifier_old_uint ( _allowed[msg.sender ][ spender] ) && !success )
     /// @notice  emits  Approval
@@ -94,11 +93,11 @@ contract ERC20 is IERC20 {
 
     /**
      * @natural_language
-     * @description Transfer tokens from the specified `from` address to the specified `to` address, using the allowance mechanism.
-     * @param from The address from which tokens will be transferred
-     * @param to The address to which tokens will be transferred
-     * @param value The amount of tokens to transfer
-     * @return success A boolean value indicating whether the transfer was successful
+     * @description When the transferFrom is successful, the balance of the specified sender (_from) decreases by the transferred value if the sender and receiver (_to) are different, or remains the same if the sender and receiver are the same. If the transferFrom is not successful, there is no change in the balances. In addition, the balance of the specified receiver (_to) increases by the transferred value if the sender and receiver are different, or remains the same if the sender and receiver are the same. The allowance for the msg.sender decreases by the transferred value, or remains the same if the transferFrom is not successful. The new allowance for msg.sender is less than or equal to the old allowance, or the sender is the same as the msg.sender.
+     * @param from The address of the token holder transferring the tokens
+     * @param to The address of the recipient
+     * @param value The number of tokens to transfer
+     * @return success A boolean indicating if the operation was successful
      */
     /// @notice postcondition ( ( _balances[from] ==  __verifier_old_uint (_balances[from] ) - value  &&  from  != to ) ||   ( _balances[from] ==  __verifier_old_uint ( _balances[from] ) &&  from== to ) &&  success )   || !success
     /// @notice postcondition ( ( _balances[to] ==  __verifier_old_uint ( _balances[to] ) + value  &&  from  != to ) ||   ( _balances[to] ==  __verifier_old_uint ( _balances[to] ) &&  from  ==to ) &&  success )   || !success
