@@ -26,9 +26,7 @@ contract ERC20 is IERC20 {
     /**
      * @natural_language
      * @description the resulting total supply of tokens should be equal to the total supply of tokens
-     * @return function_body _totalSupply
      */
-    //
     /// @notice postcondition supply == _totalSupply
     function totalSupply() public view returns (uint256 supply) {
         return _totalSupply;
@@ -38,7 +36,6 @@ contract ERC20 is IERC20 {
      * @natural_language
      * @description the resulting balance of the specified address should be equal to the balance of the specified address
      * @param owner the address to query the balance of
-     * @return function_body _balances[owner]
      * @return balance the balance of the specified address
      */
     /// @notice postcondition _balances[owner] == balance
@@ -51,7 +48,6 @@ contract ERC20 is IERC20 {
      * @description the resulting allowance of the specified address should be equal to the allowance of the specified address
      * @param owner the address to receive the transferred tokens
      * @param spender the amount of tokens to transfer
-     * @return function_body _allowed[owner][spender]
      * @return remaining a boolean value indicating whether the transfer was successful
      */
     /// @notice postcondition _allowed[owner][spender] == remaining
@@ -82,10 +78,10 @@ contract ERC20 is IERC20 {
 
     /**
      * @natural_language
-     * @description Approve the specified `spender` to spend tokens on behalf of the caller's account.
-     * @param spender The address that will be granted the allowance to spend tokens
-     * @param value The amount of tokens allowed to be spent
-     * @return success A boolean value indicating whether the approval was successful
+     * @description When the approval is successful, the allowance of the specified spender (spender) for the sender (msg.sender) in _allowed is set to the specified value (value). If the approval is not successful, the allowance remains unchanged. An Approval event is emitted in both cases.
+     * @param spender The address of the spender
+     * @param value The number of tokens to be allowed
+     * @return success A boolean indicating if the operation was successful
      */
     /// @notice postcondition (_allowed[msg.sender ][ spender] ==  value  &&  success) || ( _allowed[msg.sender ][ spender] ==  __verifier_old_uint ( _allowed[msg.sender ][ spender] ) && !success )
     /// @notice  emits  Approval
@@ -99,11 +95,11 @@ contract ERC20 is IERC20 {
 
     /**
      * @natural_language
-     * @description Transfer tokens from the specified `from` address to the specified `to` address, using the allowance mechanism.
-     * @param from The address from which tokens will be transferred
-     * @param to The address to which tokens will be transferred
-     * @param value The amount of tokens to transfer
-     * @return success A boolean value indicating whether the transfer was successful
+     * @description When the transferFrom is successful, the balance of the specified sender (_from) decreases by the transferred value if the sender and receiver (_to) are different, or remains the same if the sender and receiver are the same. If the transferFrom is not successful, there is no change in the balances. In addition, the balance of the specified receiver (_to) increases by the transferred value if the sender and receiver are different, or remains the same if the sender and receiver are the same. The allowance for the msg.sender decreases by the transferred value, or remains the same if the transferFrom is not successful. The new allowance for msg.sender is less than or equal to the old allowance, or the sender is the same as the msg.sender.
+     * @param from The address of the token holder transferring the tokens
+     * @param to The address of the recipient
+     * @param value The number of tokens to transfer
+     * @return success A boolean indicating if the operation was successful
      */
     /// @notice postcondition ( ( _balances[from] ==  __verifier_old_uint (_balances[from] ) - value  &&  from  != to ) ||   ( _balances[from] ==  __verifier_old_uint ( _balances[from] ) &&  from== to ) &&  success )   || !success
     /// @notice postcondition ( ( _balances[to] ==  __verifier_old_uint ( _balances[to] ) + value  &&  from  != to ) ||   ( _balances[to] ==  __verifier_old_uint ( _balances[to] ) &&  from  ==to ) &&  success )   || !success

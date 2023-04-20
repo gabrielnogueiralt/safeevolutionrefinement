@@ -62,12 +62,13 @@ contract ERC1155 is IERC165 {
      */
     /**
      * @natural_language
-     * @description Transfer `_value` tokens of `_id` from `_from` to `_to` safely, ensuring the proper conditions are met.
-     * @param _from The address of the account sending the tokens
-     * @param _to The address of the account receiving the tokens
+     * @description After the safeTransferFrom operation, the recipient address (_to) is not the zero address. The msg.sender is an approved operator for the token holder (_from) or the token holder is the same as the msg.sender. The balance of the specified token (_id) for the sender (_from) is greater than or equal to the transferred value (_value). The balance of the specified token for the sender decreases by the transferred value, and the balance of the specified token for the recipient increases by the transferred value. A TransferSingle event is emitted upon successful transfer.
+     * @param _from The address of the token holder transferring the tokens
+     * @param _to The address of the recipient
      * @param _id The ID of the token being transferred
      * @param _value The number of tokens to transfer
-     * @param _data Additional data to pass along with the transfer
+     * @param _data Additional data passed with the transfer
+     * @event TransferSingle Emitted when the safeTransferFrom operation is executed
      */
     /// @notice postcondition _to != address(0)
     /// @notice postcondition operators[_from][msg.sender] || _from == msg.sender
@@ -102,12 +103,13 @@ contract ERC1155 is IERC165 {
      */
     /**
      * @natural_language
-     * @description Transfer a batch of tokens with various `_ids` and `_values` from `_from` to `_to` safely, ensuring the proper conditions are met.
-     * @param _from The address of the account sending the tokens
-     * @param _to The address of the account receiving the tokens
-     * @param _ids An array of token IDs to transfer
-     * @param _values An array of token amounts to transfer, corresponding to the token IDs in `_ids`
-     * @param _data Additional data to pass along with the transfer
+     * @description After the safeBatchTransferFrom operation, the recipient address (_to) is not the zero address. The msg.sender is an approved operator for the token holder (_from) or the token holder is the same as the msg.sender. A TransferBatch event is emitted upon successful batch transfer.
+     * @param _from The address of the token holder transferring the tokens
+     * @param _to The address of the recipient
+     * @param _ids An array of token IDs being transferred
+     * @param _values An array of the number of tokens to transfer for each corresponding token ID
+     * @param _data Additional data passed with the batch transfer
+     * @event TransferBatch Emitted when the safeBatchTransferFrom operation is executed
      */
     /// @notice postcondition _to != address(0)
     /// @notice postcondition operators[_from][msg.sender] || _from == msg.sender
