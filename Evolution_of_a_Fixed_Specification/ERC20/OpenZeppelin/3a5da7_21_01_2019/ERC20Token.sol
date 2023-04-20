@@ -25,8 +25,8 @@ contract ERC20 is IERC20 {
 
     /**
      * @natural_language
-     * @description Get the total supply of tokens.
-     * @return supply The total supply of tokens
+     * @description the resulting total supply of tokens should be equal to the total supply of tokens
+     * @return function_body _totalSupply
      */
     //
     /// @notice postcondition supply == _totalSupply
@@ -36,9 +36,10 @@ contract ERC20 is IERC20 {
 
     /**
      * @natural_language
-     * @description Get the token balance of the specified `owner` address.
-     * @param owner The address whose balance is to be checked
-     * @return balance The balance of the specified address
+     * @description the resulting balance of the specified address should be equal to the balance of the specified address
+     * @param owner the address to query the balance of
+     * @return function_body _balances[owner]
+     * @return balance the balance of the specified address
      */
     /// @notice postcondition _balances[owner] == balance
     function balanceOf(address owner) public view returns (uint256 balance) {
@@ -47,10 +48,11 @@ contract ERC20 is IERC20 {
 
     /**
      * @natural_language
-     * @description Transfer tokens from the caller's account to the specified `to` address.
-     * @param to The address to receive the transferred tokens
-     * @param value The amount of tokens to transfer
-     * @return success A boolean value indicating whether the transfer was successful
+     * @description the resulting allowance of the specified address should be equal to the allowance of the specified address
+     * @param owner the address to receive the transferred tokens
+     * @param spender the amount of tokens to transfer
+     * @return function_body _allowed[owner][spender]
+     * @return remaining a boolean value indicating whether the transfer was successful
      */
     /// @notice postcondition _allowed[owner][spender] == remaining
     function allowance(
@@ -62,8 +64,11 @@ contract ERC20 is IERC20 {
 
     /**
      * @natural_language
-     * @description Approve the specified `spender` to spend tokens on behalf of the caller's account.
-     * @param spender The address that will be granted the allowance to spend tokens
+     * @description If the sender's address is not equal to the recipient's address, then the sender's new balance should be equal to their old balance minus the transferred value. If this condition holds true, and the transfer is successful, then the entire expression evaluates to true
+     * @description If the sender's address is equal to the recipient's address, then the sender's new balance should be equal to their old balance. If this condition holds true, and the transfer is successful, then the entire expression evaluates to true
+     * @description the sender's new balance should be equal to their old balance if the sender's address is equal to the recipient's address and the transfer is successful
+     * @description the sender's new balance should be equal to their old balance minus the transferred value if the sender's address is not equal to the recipient's address and the transfer is successful
+     * @param to The address to receive the transferred tokens
      * @param value The amount of tokens allowed to be spent
      * @return success A boolean value indicating whether the approval was successful
      */
