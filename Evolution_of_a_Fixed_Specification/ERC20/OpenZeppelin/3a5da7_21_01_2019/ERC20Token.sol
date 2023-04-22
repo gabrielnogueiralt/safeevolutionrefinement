@@ -59,17 +59,15 @@ contract ERC20 is IERC20 {
     }
 
     /**
-     * @natural_language
-     * @description If the sender's address is not equal to the recipient's address, then the sender's new balance should be equal to their old balance minus the transferred value. If this condition holds true, and the transfer is successful, then the entire expression evaluates to true
-     * @description If the sender's address is equal to the recipient's address, then the sender's new balance should be equal to their old balance. If this condition holds true, and the transfer is successful, then the entire expression evaluates to true
-     * @description the sender's new balance should be equal to their old balance if the sender's address is equal to the recipient's address and the transfer is successful
-     * @description the sender's new balance should be equal to their old balance minus the transferred value if the sender's address is not equal to the recipient's address and the transfer is successful
+     * @description the sender new balance should be equal to their old balance minus the transferred value if the sender address (msg.sender) is not equal to the recipient address or the sender new balance should be equal to their old balance if the sender address (msg.sender) is equal to the recipient address and the transfer is successful or the transfer is not successful
+
+     * @description the recipient new balance should be equal to their old balance plus the transferred value if the sender address (msg.sender) is not equal to the recipient address or the recipient new balance should be equal to their old balance if the sender address (msg.sender) is equal to the recipient address and the transfer is successful or the transfer is not successful
      * @param to The address to receive the transferred tokens
      * @param value The amount of tokens allowed to be spent
      * @return success A boolean value indicating whether the approval was successful
      */
-    /// @notice postcondition ( ( _balances[msg.sender] ==  __verifier_old_uint (_balances[msg.sender] ) - value  && msg.sender  != to ) ||   ( _balances[msg.sender] ==  __verifier_old_uint ( _balances[msg.sender]) && msg.sender  == to ) &&  success )   || !success
-    /// @notice postcondition ( ( _balances[to] ==  __verifier_old_uint ( _balances[to] ) + value  && msg.sender  != to ) ||   ( _balances[to] ==  __verifier_old_uint ( _balances[to] ) && msg.sender  == to ) &&  success )   || !success
+    /// @notice postcondition ( ( _balances[msg.sender] ==  __verifier_old_uint (_balances[msg.sender] ) - value && msg.sender  != to ) || ( _balances[msg.sender] ==  __verifier_old_uint ( _balances[msg.sender]) && msg.sender  == to ) &&  success )   || !success
+    /// @notice postcondition ( ( _balances[to] ==  __verifier_old_uint ( _balances[to] ) + value  && msg.sender  != to ) ||   ( _balances[to] ==  __verifier_old_uint ( _balances[to] ) && msg.sender  == to ) &&  success )  || !success
     /// @notice  emits  Transfer
     function transfer(address to, uint256 value) public returns (bool success) {
         _transfer(msg.sender, to, value);
@@ -77,13 +75,12 @@ contract ERC20 is IERC20 {
     }
 
     /**
-     * @natural_language
-     * @description When the approval is successful, the allowance of the specified spender (spender) for the sender (msg.sender) in _allowed is set to the specified value (value). If the approval is not successful, the allowance remains unchanged. An Approval event is emitted in both cases.
+     * @description the spender allowance (msg.sender)(spender) should be equal to the specified value and the operation is successful or the spender allowance (msg.sender)(spender) should be equal to the previous value if the operation is not successful
      * @param spender The address of the spender
      * @param value The number of tokens to be allowed
      * @return success A boolean indicating if the operation was successful
      */
-    /// @notice postcondition (_allowed[msg.sender ][ spender] ==  value  &&  success) || ( _allowed[msg.sender ][ spender] ==  __verifier_old_uint ( _allowed[msg.sender ][ spender] ) && !success )
+    /// @notice postcondition (_allowed[msg.sender][spender] == value && success) || ( _allowed[msg.sender ][ spender] ==  __verifier_old_uint ( _allowed[msg.sender ][ spender] ) && !success )
     /// @notice  emits  Approval
     function approve(
         address spender,
@@ -94,19 +91,23 @@ contract ERC20 is IERC20 {
     }
 
     /**
-     * @natural_language
-     * @description When the transferFrom is successful, the balance of the specified sender (_from) decreases by the transferred value if the sender and receiver (_to) are different, or remains the same if the sender and receiver are the same. If the transferFrom is not successful, there is no change in the balances. In addition, the balance of the specified receiver (_to) increases by the transferred value if the sender and receiver are different, or remains the same if the sender and receiver are the same. The allowance for the msg.sender decreases by the transferred value, or remains the same if the transferFrom is not successful. The new allowance for msg.sender is less than or equal to the old allowance, or the sender is the same as the msg.sender.
+     * @description the sender new balance should be equal to their old balance minus the transferred value if the sender address (from) is not equal to the recipient address or the sender new balance should be equal to their old balance if the sender address (from) is equal to the recipient address and the transfer is successful or the transfer is not successful
+     * @description the recipient new balance should be equal to their old balance plus the transferred value if the sender address (from) is not equal to the recipient address or the recipient new balance should be equal to their old balance if the sender address (from) is equal to the recipient address and the operation is successful or the operation is not successful
+     * @description the spender allowance (from)(msg.sender) should be equal to the previous value (from)(msg.sender) minus the transferred value and the operation is successful or the spender allowance (from)(msg.sender) should be equal to the previous value (from)(msg.sender) and the operation is not successful or the spender allowance address (from) is equal to the sender address (msg.sender)
+     * @description the spender allowance (from)(msg.sender) should be less than or equal to the previous value (from)(msg.sender) or the spender allowance (from) is not equal to the sender address (msg.sender)
+
      * @param from The address of the token holder transferring the tokens
      * @param to The address of the recipient
      * @param value The number of tokens to transfer
      * @return success A boolean indicating if the operation was successful
      */
-    /// @notice postcondition ( ( _balances[from] ==  __verifier_old_uint (_balances[from] ) - value  &&  from  != to ) ||   ( _balances[from] ==  __verifier_old_uint ( _balances[from] ) &&  from== to ) &&  success )   || !success
-    /// @notice postcondition ( ( _balances[to] ==  __verifier_old_uint ( _balances[to] ) + value  &&  from  != to ) ||   ( _balances[to] ==  __verifier_old_uint ( _balances[to] ) &&  from  ==to ) &&  success )   || !success
-    /// @notice  postcondition  (_allowed[from ][msg.sender] ==  __verifier_old_uint (_allowed[from ][msg.sender] ) - value && success) || (_allowed[from ][msg.sender] ==  __verifier_old_uint (_allowed[from ][msg.sender] ) && !success) || from  == msg.sender
-    /// @notice postcondition  _allowed[from ][msg.sender]  <= __verifier_old_uint (_allowed[from ][msg.sender] ) ||  from  == msg.sender
+    /// @notice postcondition ( (_balances[from] ==  __verifier_old_uint (_balances[from] ) - value  &&  from != to) || (_balances[from] ==  __verifier_old_uint (_balances[from] ) &&  from == to ) &&  success ) || !success
+    /// @notice postcondition ( ( _balances[to] ==  __verifier_old_uint( _balances[to] ) + value  &&  from != to ) || (_balances[to] ==  __verifier_old_uint( _balances[to] ) &&  from  == to ) &&  success )  || !success
+    /// @notice  postcondition  (_allowed[from][msg.sender] ==  __verifier_old_uint (_allowed[from][msg.sender] ) - value && success) || (_allowed[from][msg.sender] ==  __verifier_old_uint (_allowed[from][msg.sender] ) && !success) || from  == msg.sender
+    /// @notice postcondition  _allowed[from][msg.sender]  <= __verifier_old_uint (_allowed[from][msg.sender] ) ||  from  == msg.sender
     /// @notice emits  Transfer
     /// @notice emits  Approval
+
     function transferFrom(
         address from,
         address to,
