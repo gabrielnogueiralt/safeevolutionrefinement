@@ -23,9 +23,6 @@ contract ERC20 is IERC20 {
         uint256 value
     );
 
-    /**
-     * @description the resulting total supply of tokens should be equal to the total supply of tokens
-     */
     /// @notice postcondition supply == _totalSupply
     function totalSupply() public view returns (uint256 supply) {
         return _totalSupply;
@@ -43,9 +40,9 @@ contract ERC20 is IERC20 {
 
     /**
      * @description the resulting allowance of the specified address should be equal to the allowance of the specified address
-     * @param owner the address to receive the transferred tokens
-     * @param spender the amount of tokens to transfer
-     * @return remaining a boolean value indicating whether the transfer was successful
+     * @param (owner) the address to receive the transferred tokens
+     * @param (spender) the amount of tokens to transfer
+     * @return (remaining) a boolean value indicating whether the transfer was successful
      */
     /// @notice postcondition _allowed[owner][spender] == remaining
     function allowance(
@@ -59,9 +56,9 @@ contract ERC20 is IERC20 {
      * @description the sender new balance should be equal to their old balance minus the transferred value if the sender address (msg.sender) is not equal to the recipient address or the sender new balance should be equal to their old balance if the sender address (msg.sender) is equal to the recipient address and the transfer is successful or the transfer is not successful
 
      * @description the recipient new balance should be equal to their old balance plus the transferred value if the sender address (msg.sender) is not equal to the recipient address or the recipient new balance should be equal to their old balance if the sender address (msg.sender) is equal to the recipient address and the transfer is successful or the transfer is not successful
-     * @param to The address to receive the transferred tokens
-     * @param value The amount of tokens allowed to be spent
-     * @return success A boolean value indicating whether the approval was successful
+     * @param (to) the address to receive the transferred tokens
+     * @param (value) the amount of tokens allowed to be spent
+     * @return (success) a boolean value indicating whether the approval was successful
      */
     /// @notice postcondition ( ( _balances[msg.sender] ==  __verifier_old_uint (_balances[msg.sender] ) - value && msg.sender  != to ) || ( _balances[msg.sender] ==  __verifier_old_uint ( _balances[msg.sender]) && msg.sender  == to ) &&  success )   || !success
     /// @notice postcondition ( ( _balances[to] ==  __verifier_old_uint ( _balances[to] ) + value  && msg.sender  != to ) ||   ( _balances[to] ==  __verifier_old_uint ( _balances[to] ) && msg.sender  == to ) &&  success )  || !success
