@@ -24,7 +24,6 @@ contract ERC20 is IERC20 {
     );
 
     /**
-     * @natural_language
      * @description the resulting total supply of tokens should be equal to the total supply of tokens
      */
     /// @notice postcondition supply == _totalSupply
@@ -33,7 +32,6 @@ contract ERC20 is IERC20 {
     }
 
     /**
-     * @natural_language
      * @description the resulting balance of the specified address should be equal to the balance of the specified address
      * @param owner the address to query the balance of
      * @return balance the balance of the specified address
@@ -44,7 +42,6 @@ contract ERC20 is IERC20 {
     }
 
     /**
-     * @natural_language
      * @description the resulting allowance of the specified address should be equal to the allowance of the specified address
      * @param owner the address to receive the transferred tokens
      * @param spender the amount of tokens to transfer
